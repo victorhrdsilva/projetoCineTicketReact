@@ -11,7 +11,7 @@ function Session({weekday, date, showtimes}) {
             <SessionTimes>
                 {showtimes.map((item, index) => {
                     return (
-                        <Link key={index} to={`/seat/${item.id}`}>
+                        <Link key={index} to={`/seats/${item.id}`}>
                             <SessionButton>{item.name}</SessionButton>
                         </Link>
                     )})}
