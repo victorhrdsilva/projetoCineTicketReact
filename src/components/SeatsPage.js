@@ -1,37 +1,92 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import Footer from "./Footer";
 
 
-function SingularSeat({ id, name, isAvailable }) {
-    switch (isAvailable) {
+
+function SingularSeat({ id, name, isAvailable, setSelectedSeats, selectedSeats, setSeatsNumber,seatsNumber }) {
+    const [available, setAvailable] = useState(isAvailable)
+
+    function selectSeat() {
+        setSelectedSeats([...selectedSeats, id])
+        setSeatsNumber([...seatsNumber, name])
+        setAvailable('selected')
+    }
+
+    function deselectSeat() {
+        let indiceID = selectedSeats.indexOf(id)
+        selectedSeats.splice(indiceID, 1)
+        let indiceName = seatsNumber.indexOf(name)
+        selectedSeats.splice(indiceName, 1)
+        setAvailable(true)
+    }
+
+    switch (available) {
         case true:
-            return (<SeatOption>{name}</SeatOption>)
+            return (<SeatOption onClick={selectSeat}>{name}</SeatOption>)
             break;
         case false:
             return (<SeatOptionUnavailable onClick={() => alert('Este assento está indisponível!')}>{name}</SeatOptionUnavailable>);
             break;
         case 'selected':
-            return (<SeatOptionSelected>{name}</SeatOptionSelected>);
+            return (<SeatOptionSelected onClick={deselectSeat}>{name}</SeatOptionSelected>);
             break;
+        default: return "";
     }
 }
 
-export default function SeatsPage({ setSelectedSession, selectedMovie, selectedSession }) {
+export default function SeatsPage({ setPostData, setMovieInformation, setSeatsNumber, seatsNumber }) {
     const parames = useParams();
     const [data, setData] = useState([]);
     const [selectedSeats, setSelectedSeats] = useState([]);
+    const [selectedSession, setSelectedSession] = useState(false);
+    const [name, setName] = useState("");
+    const [cpf, setCpf] = useState("");
+    let navigate = useNavigate();
 
     useEffect(() => {
         const promisse = axios.get(`https://mock-api.driven.com.br/api/v7/cineflex/showtimes/${parames.idSessions}/seats`);
 
         promisse.then(res => {
-            setData(res.data.seats)
-            setSelectedSession(res.data)
+            setData(res.data.seats);
+            setSelectedSession(res.data);
         });
     }, []);
+
+    function submit(event) {
+        event.preventDefault()
+        if (cpf.length === 14 && selectedSeats.length > 0) {
+            let orderInformation = {
+                ids: selectedSeats,
+                name: name,
+                cpf: cpf
+            }
+            setPostData(orderInformation)
+            setMovieInformation({
+                posterURL: selectedSession.movie.posterURL,
+                title: selectedSession.movie.title,
+                weekday: selectedSession.day.weekday,
+                name: selectedSession.name,
+                date: selectedSession.day.date,
+            })
+            navigate('/sucess', { replace: true })
+        }
+    }
+
+    function formatCPF(cpf) {
+        const cpfCurrent = cpf
+
+        let newCpf;
+
+        newCpf = cpfCurrent.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,
+            function (regex, argumento1, argumento2, argumento3, argumento4) {
+                return argumento1 + '.' + argumento2 + '.' + argumento3 + '-' + argumento4;
+            })
+        setCpf(newCpf);
+        console.log(newCpf.length)
+    }
 
     return (
         <>
@@ -42,9 +97,14 @@ export default function SeatsPage({ setSelectedSession, selectedMovie, selectedS
                         {data.map((item, index) =>
                             <SingularSeat
                                 key={index}
+                                item={item}
                                 id={item.id}
                                 name={item.name}
                                 isAvailable={item.isAvailable}
+                                setSelectedSeats={setSelectedSeats}
+                                selectedSeats={selectedSeats}
+                                setSeatsNumber={setSeatsNumber}
+                                seatsNumber={seatsNumber}
                             />)}
                     </ChoiceSeats>
                     <Subtitle>
@@ -62,8 +122,20 @@ export default function SeatsPage({ setSelectedSession, selectedMovie, selectedS
                         </Option>
                     </Subtitle>
                 </Seats>
+                <Form onSubmit={submit}>
+                    <label htmlFor="name">Nome do comprador:</label>
+                    <input id="name" type="text" value={name} placeholder="Digite seu nome..." onChange={e => setName(e.target.value)} required />
+                    <label htmlFor="cpf" form="cpf">Nome do comprador:</label>
+                    <input id="cpf" type="text" value={cpf} placeholder="Digite seu CPF..." onBlur={() => formatCPF(cpf)} onChange={e => setCpf(e.target.value)} required />
+                    <button type="submit">Reservar assento(s)</button>
+                </Form>
             </SeatsScreen>
-            <Footer selectedMovie={selectedMovie} selectedSession={selectedSession} />
+            {selectedSession ? (<Footer
+                posterURL={selectedSession.movie.posterURL}
+                title={selectedSession.movie.title}
+                weekday={selectedSession.day.weekday}
+                name={selectedSession.name}
+                selectedSession={selectedSession} />) : ""}
         </>
     )
 }
@@ -97,6 +169,10 @@ const Option = styled.div`
     font-size: 13px;
     color: #4E5A65;
     margin: 15px;
+
+    p{
+        margin-top: 5px;
+    }
 `
 const ColorGreen = styled.div`
     width: 25px;
@@ -143,4 +219,37 @@ const SeatOptionUnavailable = styled(SeatOption)`
 const SeatOptionSelected = styled(SeatOption)`
     background: #8DD7CF;
     border: 1px solid #45BDB0;
+`
+const Form = styled.form`
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+    margin: 60px 0;
+
+    input{
+        width: 327px;
+        height: 51px;
+        margin: 5px 0 15px;
+        padding-left: 18px;
+        border: 1px solid #D5D5D5;
+        border-radius: 3px;
+        font-size: 18px;
+
+        &::placeholder {
+            font-size: 18px;
+            color: #AFAFAF;
+        }
+    }
+
+    button {
+        width: 250px;
+        height: 55px;
+        color: #FFFFFF;
+        font-size: 18px;
+        background: #E8833A;
+        border-radius: 3px;
+        border: none;
+        padding: 5px;
+        margin: 30px auto 90px;
+    }
 `

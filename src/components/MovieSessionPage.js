@@ -20,9 +20,10 @@ function Session({weekday, date, showtimes}) {
     )
 }
 
-export default function MovieSessionPage({setSelectedMovie, selectedMovie}) {
+export default function MovieSessionPage() {
     const parames = useParams();
     const [data, setData] = useState([]);
+    const [selectedMovie, setSelectedMovie] = useState(false)
 
     useEffect(() => {
         const promisse = axios.get(`https://mock-api.driven.com.br/api/v7/cineflex/movies/${parames.idMovie}/showtimes`);
@@ -46,7 +47,7 @@ export default function MovieSessionPage({setSelectedMovie, selectedMovie}) {
                 />
                 )}
             </Sessions>
-            <Footer selectedMovie={selectedMovie}></Footer>
+            { selectedMovie ? (<Footer posterURL={selectedMovie.posterURL} title={selectedMovie.title}></Footer>) : ""}
         </>
     )
 }

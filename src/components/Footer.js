@@ -1,14 +1,14 @@
 import styled from "styled-components"
 
-export default function Footer({ selectedMovie, selectedSession }) {
+export default function Footer({ posterURL, title, selectedSession, weekday, name}) {
     return (
         <div>
             <MoviePoster>
-                <img src={selectedMovie.posterURL} alt="poster de filme" />
+                <img src={posterURL} alt="poster de filme" />
                 <Text>
-                    <h3>{selectedMovie.title}</h3>
+                    <h3>{title}</h3>
                     {selectedSession ? 
-                    <h3>{selectedSession.day.weekday} - {selectedSession.name}</h3> : ""}
+                    <h3>{weekday} - {name}</h3> : ""}
                 </Text>
             </MoviePoster>
         </div>
