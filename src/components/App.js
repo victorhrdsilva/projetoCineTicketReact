@@ -8,7 +8,7 @@ import SeatsPage from './SeatsPage';
 import Sucess from './Sucess'
 
 export default function App() {
-    const [postData, setPostData] = useState([]);
+    const [postData, setPostData] = useState(false);
     const [movieInformation, setMovieInformation] = useState([]);
     const [seatsNumber, setSeatsNumber] = useState([])
 
@@ -25,7 +25,8 @@ export default function App() {
                             setPostData={setPostData}
                             setMovieInformation={setMovieInformation}
                             setSeatsNumber={setSeatsNumber}
-                            seatsNumber={seatsNumber} />}></Route>
+                            seatsNumber={seatsNumber} 
+                            postData={postData}/>}></Route>
                     <Route path='/sucess' element=
                         {<Sucess
                             postData={postData}

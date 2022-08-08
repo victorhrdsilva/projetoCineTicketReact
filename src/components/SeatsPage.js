@@ -37,7 +37,7 @@ function SingularSeat({ id, name, isAvailable, setSelectedSeats, selectedSeats, 
     }
 }
 
-export default function SeatsPage({ setPostData, setMovieInformation, setSeatsNumber, seatsNumber }) {
+export default function SeatsPage({ postData, setPostData, setMovieInformation, setSeatsNumber, seatsNumber }) {
     const parames = useParams();
     const [data, setData] = useState([]);
     const [selectedSeats, setSelectedSeats] = useState([]);
@@ -54,8 +54,8 @@ export default function SeatsPage({ setPostData, setMovieInformation, setSeatsNu
             setSelectedSession(res.data);
         });
     }, []);
-
-    function submit(event) {
+    
+    function Submit(event) {
         event.preventDefault()
         if (cpf.length === 14 && selectedSeats.length > 0) {
             let orderInformation = {
@@ -64,6 +64,7 @@ export default function SeatsPage({ setPostData, setMovieInformation, setSeatsNu
                 cpf: cpf
             }
             setPostData(orderInformation)
+
             setMovieInformation({
                 posterURL: selectedSession.movie.posterURL,
                 title: selectedSession.movie.title,
@@ -71,7 +72,8 @@ export default function SeatsPage({ setPostData, setMovieInformation, setSeatsNu
                 name: selectedSession.name,
                 date: selectedSession.day.date,
             })
-            navigate('/sucess', { replace: true })
+
+            navigate('/sucess', { replace: true });
         }
     }
 
@@ -122,7 +124,7 @@ export default function SeatsPage({ setPostData, setMovieInformation, setSeatsNu
                         </Option>
                     </Subtitle>
                 </Seats>
-                <Form onSubmit={submit}>
+                <Form onSubmit={Submit}>
                     <label htmlFor="name">Nome do comprador:</label>
                     <input id="name" type="text" value={name} placeholder="Digite seu nome..." onChange={e => setName(e.target.value)} required />
                     <label htmlFor="cpf" form="cpf">Nome do comprador:</label>
