@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
@@ -6,7 +6,7 @@ import Footer from "./Footer";
 
 
 
-function SingularSeat({ id, name, isAvailable, setSelectedSeats, selectedSeats, setSeatsNumber,seatsNumber }) {
+function SingularSeat({ id, name, isAvailable, setSelectedSeats, selectedSeats, setSeatsNumber, seatsNumber }) {
     const [available, setAvailable] = useState(isAvailable)
 
     function selectSeat() {
@@ -19,19 +19,22 @@ function SingularSeat({ id, name, isAvailable, setSelectedSeats, selectedSeats, 
         let indiceID = selectedSeats.indexOf(id)
         selectedSeats.splice(indiceID, 1)
         let indiceName = seatsNumber.indexOf(name)
-        selectedSeats.splice(indiceName, 1)
+        seatsNumber.splice(indiceName, 1)
         setAvailable(true)
     }
 
     switch (available) {
         case true:
             return (<SeatOption onClick={selectSeat}>{name}</SeatOption>)
+            // eslint-disable-next-line
             break;
         case false:
             return (<SeatOptionUnavailable onClick={() => alert('Este assento está indisponível!')}>{name}</SeatOptionUnavailable>);
+            // eslint-disable-next-line
             break;
         case 'selected':
             return (<SeatOptionSelected onClick={deselectSeat}>{name}</SeatOptionSelected>);
+            // eslint-disable-next-line
             break;
         default: return "";
     }
@@ -53,8 +56,9 @@ export default function SeatsPage({ postData, setPostData, setMovieInformation, 
             setData(res.data.seats);
             setSelectedSession(res.data);
         });
+        // eslint-disable-next-line
     }, []);
-    
+
     function Submit(event) {
         event.preventDefault()
         if (cpf.length === 14 && selectedSeats.length > 0) {
@@ -74,6 +78,8 @@ export default function SeatsPage({ postData, setPostData, setMovieInformation, 
             })
 
             navigate('/sucess', { replace: true });
+        } else {
+            alert("Preencha os dados corretamente")
         }
     }
 
@@ -92,6 +98,11 @@ export default function SeatsPage({ postData, setPostData, setMovieInformation, 
 
     return (
         <>
+            <Link to={`/`}>
+                <Return>
+                    <ion-icon name="arrow-back-circle"></ion-icon>
+                </Return>
+            </Link>
             <SeatsScreen>
                 <h2>Selecione o(s) assento(s)</h2>
                 <Seats>
@@ -109,6 +120,7 @@ export default function SeatsPage({ postData, setPostData, setMovieInformation, 
                                 seatsNumber={seatsNumber}
                             />)}
                     </ChoiceSeats>
+                    <Screen>Tela</Screen>
                     <Subtitle>
                         <Option>
                             <ColorGreen></ColorGreen>
@@ -126,8 +138,8 @@ export default function SeatsPage({ postData, setPostData, setMovieInformation, 
                 </Seats>
                 <Form onSubmit={Submit}>
                     <label htmlFor="name">Nome do comprador:</label>
-                    <input id="name" type="text" value={name} placeholder="Digite seu nome..." onChange={e => setName(e.target.value)} required />
-                    <label htmlFor="cpf" form="cpf">Nome do comprador:</label>
+                    <input autocomplete="off" id="name" type="text" value={name} placeholder="Digite seu nome..." onChange={e => setName(e.target.value)} required />
+                    <label autocomplete="off" htmlFor="cpf" form="cpf">Nome do comprador:</label>
                     <input id="cpf" type="text" value={cpf} placeholder="Digite seu CPF..." onBlur={() => formatCPF(cpf)} onChange={e => setCpf(e.target.value)} required />
                     <button type="submit">Reservar assento(s)</button>
                 </Form>
@@ -148,28 +160,39 @@ const SeatsScreen = styled.div`
     justify-content: center;
     align-items: center;
     width:100vw;
+    color: #FFFFFF;
 
     h2 {
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding-top: 72px;
-        height: 110px;
+        padding-top: 40px;
+        height: 120px;
         width: 100vw;
         font-size: 24px;
+        max-width: 90vw;
     }
+`
+const Screen = styled.div`
+    height: 20px;
+    border-bottom: 3px solid #FF5757;
+    border-radius: 100%;
+    width: 350px;
+    text-align: center;
+    margin-top: 10px;
+    max-width: 90vw;
 `
 const Subtitle = styled(SeatsScreen)`
     flex-direction: row;
     flex-wrap: wrap;
+    max-width: 90vw;
 `
 const Option = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 13px;
-    color: #4E5A65;
     margin: 15px;
 
     p{
@@ -179,17 +202,17 @@ const Option = styled.div`
 const ColorGreen = styled.div`
     width: 25px;
     height: 25px;
-    border-radius: 17px;
-    background: #8DD7CF;
-    border: 1px solid #1AAE9E;
+    border-radius: 5px;
+    background: #094523;
+    color: #000000;
+    font-weight: 700;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
 `
 const ColorGreey = styled(ColorGreen)`
-    background: #C3CFD9;
-    border: 1px solid #7B8B99;
+    background: #FFFFFF;
 `
 const ColorRed = styled(ColorGreen)`
-    background: #FBE192;
-    border: 1px solid #F7C52B;
+    background: #FF5757;
 `
 const Seats = styled.div`
     display: flex;
@@ -204,23 +227,24 @@ const ChoiceSeats = styled.div`
     justify-content: center;
     flex-wrap: wrap;
     width: 387px;
+    max-width: 90vw;
 `
 const SeatOption = styled(ColorGreen)`
     display: flex;
     justify-content: center;
-    background-color: #C3CFD9;
-    border: 1px solid #808F9D;
+    background-color: #FFFFFF;
     align-items: center;
-    width: 26px;
-    margin: 10px 3.6px;
+    width: 9%;
+    margin: 10px 1%;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
 `
 const SeatOptionUnavailable = styled(SeatOption)`
-    background: #FBE192;
-    border: 1px solid #F7C52B;
+    background: #FF5757;
+    color: #FFFFFF;
 `
 const SeatOptionSelected = styled(SeatOption)`
-    background: #8DD7CF;
-    border: 1px solid #45BDB0;
+    background: #094523;
+    color: #FFFFFF;
 `
 const Form = styled.form`
     display: flex;
@@ -234,8 +258,9 @@ const Form = styled.form`
         margin: 5px 0 15px;
         padding-left: 18px;
         border: 1px solid #D5D5D5;
-        border-radius: 3px;
+        border-radius: 5px;
         font-size: 18px;
+        max-width: 80vw;
 
         &::placeholder {
             font-size: 18px;
@@ -248,10 +273,20 @@ const Form = styled.form`
         height: 55px;
         color: #FFFFFF;
         font-size: 18px;
-        background: #E8833A;
-        border-radius: 3px;
+        background: #FF5757;
+        border-radius: 5px;
         border: none;
         padding: 5px;
         margin: 30px auto 90px;
+        max-width: 90vw;
     }
+`
+const Return = styled.button`
+    position: sticky;
+    top: 14px;
+    left: 14px;
+    font-size: 40px;
+    background-color: transparent;
+    border: none;
+    color: #FF5757;
 `

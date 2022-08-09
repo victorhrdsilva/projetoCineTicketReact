@@ -12,6 +12,7 @@ export default function Sucess({ postData, movieInformation, seatsNumber }) {
         promisse.then(() => {
             setSucess(true)
         });
+        // eslint-disable-next-line
     }, []);
 
     return (
@@ -53,11 +54,12 @@ const Page = styled.div`
     justify-content: center;
     align-items: center;
     width: 100vw;
+    color: #FFFFFF;
     padding-top: 100px;
     `
 const Title = styled.h1`
     font-size: 28px;
-    color: #247A6B;
+    color: #FF5757;
     width: 225px;
     text-align: center;
     font-weight: 700;
@@ -85,7 +87,7 @@ const Button = styled.button`
         height: 55px;
         color: #FFFFFF;
         font-size: 18px;
-        background: #E8833A;
+        background: #FF5757;
         border-radius: 3px;
         border: none;
         padding: 5px;
