@@ -98,7 +98,7 @@ export default function SeatsPage({ postData, setPostData, setMovieInformation, 
 
     return (
         <>
-            <Link to={`/`}>
+            <Link to={selectedSession ? `/sessions/${selectedSession.movie.id}` : "/"}>
                 <Return>
                     <ion-icon name="arrow-back-circle"></ion-icon>
                 </Return>
